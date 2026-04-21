@@ -1,5 +1,6 @@
 # claude-toolkit
 
+[![CI](https://github.com/ajvelo/claude-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/ajvelo/claude-toolkit/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Shell](https://img.shields.io/badge/shell-bash-blue)
 ![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-purple)
