@@ -18,9 +18,9 @@ for persistence.
 
 1. **Stack Trace Analysis** - Parse Kotlin/JVM stack traces, identify root cause
 2. **Micronaut DI** - BeanInstantiationException, NoSuchBeanException, circular dependencies, @Named qualifiers
-3. **Koin DI** (data-fusion) - Module declarations, scope resolution, missing definitions
+3. **Koin DI** - Module declarations, scope resolution, missing definitions
 4. **Exposed ORM** - SQL exceptions, entity mapping, transaction boundaries, N+1 queries
-5. **Payment State Machines** - Illegal state transitions, idempotency, race conditions, balance calculations
+5. **State Machines** - Illegal state transitions, idempotency, race conditions
 6. **BigDecimal** - Rounding modes, scale issues, comparison pitfalls (compareTo vs equals)
 7. **Coroutines** - CancellationException, scope management, structured concurrency
 
@@ -44,10 +44,10 @@ for persistence.
 - Entity ID types mismatched between tables
 - Lazy loading outside transaction scope
 
-### Payment/Wallet
-- State machine: check valid transitions map
-- Balance: always use BigDecimal with explicit scale and RoundingMode
-- Idempotency: check idempotency key handling in service layer
+### Business logic / state machines
+- Validate transitions against an explicit map; log invalid attempts with enough context to reproduce
+- Use `BigDecimal` with explicit `scale` and `RoundingMode` for any money or precision-sensitive math
+- Idempotency: keyed at the service layer, with a unique-constraint or dedupe table backing it
 
 ## Tools Available
 - `Read` - Read source files

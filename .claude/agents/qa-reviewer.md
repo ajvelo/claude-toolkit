@@ -67,16 +67,21 @@ For each changed file, consider:
 [Concrete test code snippets for critical gaps]
 ```
 
-## Build/Test Commands
+## Build / test commands
 
-| Project | Test Command |
-|---------|-------------|
-| portal | `cd {portal-path} && make test` |
-| app | `cd {app-path} && fvm flutter test` |
-| wallet | `cd {wallet-path} && ./gradlew test` |
-| gateways | `cd {gateways-path} && ./gradlew test` |
+The actual test command for each project is declared in
+`.claude/skills/start/validation-commands.md` and each project's
+`projects/{shortname}.md`. Examples:
 
-Resolve all `{*-path}` placeholders from `~/.claude/project-repos.json`.
+| Stack                | Command                                         |
+|----------------------|-------------------------------------------------|
+| Flutter              | `cd {repo-path} && fvm flutter test`            |
+| Kotlin (Gradle)      | `cd {repo-path} && ./gradlew test`              |
+| TypeScript (pnpm)    | `cd {repo-path} && pnpm test`                   |
+| Python (uv)          | `cd {repo-path} && uv run pytest`               |
+
+Resolve `{repo-path}` and similar placeholders from
+`~/.claude/project-repos.json`.
 
 ## Tools Available
 - `Read` — Read test files and source files
