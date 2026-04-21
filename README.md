@@ -12,6 +12,8 @@ knowledge base, regardless of which repository you're working on.
 
 ![installer demo](assets/demo.gif)
 
+📝 **Writeup:** [Single-shot LLM code suggestions are confidently wrong. Here's what I did about it.](https://medium.com/@Andreasv/single-shot-llm-code-suggestions-are-confidently-wrong-heres-what-i-did-about-it-a76bcef79215)
+
 > **Positioning**: this is a *template toolkit* for multi-project teams. The
 > example registry covers five representative stacks (Flutter, TypeScript,
 > Kotlin, Python, Terraform). Fork it, replace the registry with your own
