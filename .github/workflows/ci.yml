@@ -87,7 +87,7 @@ jobs:
           (cd "$SBOX/code/demo-api" && git init -q && echo 'plugins {}' > build.gradle.kts && git add . && git -c user.email=t@t -c user.name=t commit -qm init)
           echo "SBOX=$SBOX" >> "$GITHUB_ENV"
       - name: Run installer
-        run: HOME="$SBOX" PROJECT_REPOS_DIR="$SBOX/code" bash install.sh
+        run: HOME="$SBOX" PROJECT_REPOS_DIR="$SBOX/code" SKIP_CLAUDE_CHECK=1 bash install.sh
       - name: Verify hooks symlinked
         run: |
           test -L "$SBOX/.claude/hooks/bash-safety.sh"

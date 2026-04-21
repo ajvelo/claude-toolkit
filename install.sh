@@ -18,9 +18,13 @@ echo "=== claude-toolkit installer ==="
 echo ""
 
 # --- Prerequisites ---
+# Set SKIP_CLAUDE_CHECK=1 to skip the claude CLI check (useful in CI and
+# when validating the installer in an environment that doesn't run Claude).
 MISSING=()
 command -v jq >/dev/null 2>&1 || MISSING+=("jq")
-command -v claude >/dev/null 2>&1 || MISSING+=("claude (Claude Code CLI)")
+if [ "${SKIP_CLAUDE_CHECK:-}" != "1" ]; then
+  command -v claude >/dev/null 2>&1 || MISSING+=("claude (Claude Code CLI)")
+fi
 
 if [ ${#MISSING[@]} -gt 0 ]; then
   echo "ERROR: Missing prerequisites:"
