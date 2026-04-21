@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Copy this to ~/.claude/settings.local.json and customize. This file controls tool permissions.",
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git fetch:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git show:*)",
+      "Bash(git -C:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh run:*)",
+      "Bash(gh api:*)",
+      "Bash(./gradlew:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker compose:*)",
+      "Bash(fvm flutter:*)",
+      "Bash(fvm dart:*)",
+      "Bash(pnpm:*)",
+      "Bash(make:*)",
+      "Bash(curl -s:*)",
+      "Bash(curl -sf:*)",
+      "Bash(curl -sF:*)",
+      "Bash(curl -sI:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm -rf /tmp/:*)",
+      "Bash(ls:*)",
+      "Bash(lsof -i:*)",
+      "Bash(timeout:*)",
+      "Bash(wc:*)",
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "deny": []
+  }
+}
