@@ -8,7 +8,9 @@
 An opinionated Claude Code workspace for orchestrating a multi-language
 project setup. Clone it once, start Claude Code from the toolkit directory,
 and every session gets the same skills, sub-agents, safety hooks, and
-knowledge base — regardless of which repository you're working on.
+knowledge base, regardless of which repository you're working on.
+
+![installer demo](assets/demo.gif)
 
 > **Positioning**: this is a *template toolkit* for multi-project teams. The
 > example registry covers five representative stacks (Flutter, TypeScript,
