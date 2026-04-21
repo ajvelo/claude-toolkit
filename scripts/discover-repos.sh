@@ -28,7 +28,26 @@ ENV_FILE="$CLAUDE_DIR/project-repos.env"
 JSON_FILE="$CLAUDE_DIR/project-repos.json"
 LOCAL_OVERRIDES="$CLAUDE_DIR/project-repos.local.env"
 
-GITHUB_OWNER_DEFAULT="${GITHUB_OWNER:-my-org}"
+# Resolve the default GitHub owner for the project registry.
+# Priority: GITHUB_OWNER env var -> authenticated `gh` user -> "my-org".
+resolve_github_owner() {
+  if [ -n "${GITHUB_OWNER:-}" ]; then
+    echo "$GITHUB_OWNER"
+    return
+  fi
+  if command -v gh >/dev/null 2>&1; then
+    # `gh api user` works whether the token is a personal or org-scoped PAT.
+    local login
+    login=$(gh api user --jq '.login' 2>/dev/null)
+    if [ -n "$login" ]; then
+      echo "$login"
+      return
+    fi
+  fi
+  echo "my-org"
+}
+
+GITHUB_OWNER_DEFAULT="$(resolve_github_owner)"
 
 DEEP_SCAN=false
 EXTRA_SEARCH_DIRS=""
@@ -67,7 +86,9 @@ fi
 # --- overrides ---
 get_local_override() {
   local shortname="$1"
-  local varname="PROJECT_REPO_$(echo "$shortname" | tr '[:lower:]' '[:upper:]' | tr '-' '_')"
+  local upper
+  upper=$(echo "$shortname" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
+  local varname="PROJECT_REPO_${upper}"
   if [ -f "$LOCAL_OVERRIDES" ]; then
     grep "^${varname}=" "$LOCAL_OVERRIDES" 2>/dev/null | head -1 | cut -d'=' -f2- | tr -d '"' || true
   fi

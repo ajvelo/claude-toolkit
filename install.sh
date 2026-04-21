@@ -81,11 +81,13 @@ echo "[4/6] Discovering repo locations..."
 ENV_PREFIX="$ENV_PREFIX" bash "$SCRIPT_DIR/scripts/discover-repos.sh" "$@"
 
 ENV_FILE="$CLAUDE_DIR/project-repos.env"
+# shellcheck source=/dev/null
 [ -f "$ENV_FILE" ] && source "$ENV_FILE"
 
 # --- Project instruction symlinks ---
 echo "[5/6] Installing project-specific instructions..."
 LINKED=0
+# shellcheck disable=SC2034  # github_repo is part of the record but unused here
 while IFS='|' read -r shortname github_repo project_file rest; do
   [[ "$shortname" =~ ^#.*$ || -z "$shortname" ]] && continue
   shortname=$(echo "$shortname" | xargs)
