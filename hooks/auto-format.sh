@@ -16,6 +16,7 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 [ ! -f "$FILE_PATH" ] && exit 0
 
 REPOS_ENV="$HOME/.claude/project-repos.env"
+# shellcheck source=/dev/null
 [ -f "$REPOS_ENV" ] && source "$REPOS_ENV"
 
 # Projects that own their own format hook (opt-out of global auto-format).

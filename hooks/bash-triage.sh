@@ -14,9 +14,10 @@ STDOUT=$(echo "$INPUT" | jq -r '.tool_result.stdout // empty' 2>/dev/null)
 STDERR=$(echo "$INPUT" | jq -r '.tool_result.stderr // empty' 2>/dev/null)
 OUTPUT="$STDOUT $STDERR"
 
-# JDK version mismatch (system default JDK 25; gateways/data-fusion/search need 21, wallet needs 25)
+# JDK version mismatch
+# shellcheck disable=SC2016  # $() is meant as literal text in the hint
 if echo "$OUTPUT" | grep -qiE 'unsupported class file|class file version 6[2-9]|has been compiled by a more recent version|UnsupportedClassVersionError|Could not target'; then
-  echo '{"systemMessage": "HINT: JDK version mismatch. Check which JDK the project needs: wallet=25, gateways/data-fusion/search=21. Set: export JAVA_HOME=$(/usr/libexec/java_home -v VERSION)"}'
+  echo '{"systemMessage": "HINT: JDK version mismatch. Check which JDK the project needs (see projects/<shortname>.md). Set: export JAVA_HOME=$(/usr/libexec/java_home -v VERSION)"}'
   exit 0
 fi
 
@@ -27,6 +28,7 @@ if echo "$OUTPUT" | grep -qiE 'could not connect to.*daemon|daemon.*stopped|OutO
 fi
 
 # GPG signing failure
+# shellcheck disable=SC2016  # $() is meant as literal text in the hint
 if echo "$OUTPUT" | grep -qiE 'gpg failed to sign|failed to sign the data|No secret key|gpg:.*error'; then
   echo '{"systemMessage": "HINT: GPG signing failed. Fix: gpgconf --kill gpg-agent && gpg-agent --daemon && export GPG_TTY=$(tty)"}'
   exit 0

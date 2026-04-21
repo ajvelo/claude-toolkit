@@ -21,6 +21,7 @@ RED="\033[31m"
 
 # --- Project detection ---
 REPOS_ENV="$HOME/.claude/project-repos.env"
+# shellcheck source=/dev/null
 [ -f "$REPOS_ENV" ] && source "$REPOS_ENV"
 
 CWD="${CWD_JSON:-$(pwd)}"
@@ -51,7 +52,7 @@ fi
 # --- Model short name ---
 SHORT_MODEL=""
 if [ -n "$MODEL" ]; then
-  SHORT_MODEL=$(echo "$MODEL" | sed 's/^Claude //')
+  SHORT_MODEL="${MODEL#Claude }"
 fi
 
 # --- Context bar ---
