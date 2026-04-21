@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "sentry": {
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp"
+    },
+    "atlassian-mcp-server": {
+      "type": "sse",
+      "url": "https://mcp.atlassian.com/v1/sse"
+    },
+    "figmaRemoteMcp": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "posthog": {
+      "type": "http",
+      "url": "https://mcp-eu.posthog.com/mcp"
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-sonarqube"],
+      "env": {
+        "SONARQUBE_TOKEN": "YOUR_TOKEN_HERE"
+      }
+    }
+  }
+}
