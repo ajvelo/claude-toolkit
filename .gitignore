@@ -1,0 +1,35 @@
+# MCP config
+.mcp.json
+snowflake-mcp-config.yaml
+
+# Secrets and credentials
+.env*
+*.local
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.jks
+credentials.json
+secrets.yaml
+secrets.yml
+service-account.json
+settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# MCP tool artifacts
+.playwright-mcp/
+
+# Node
+node_modules/
+ralph-loop.local.md
