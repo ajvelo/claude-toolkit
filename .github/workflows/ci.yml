@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck
+          shellcheck --severity=warning hooks/*.sh scripts/*.sh install.sh
+
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON
+        run: |
+          for f in $(find . -name '*.json' -not -path './.git/*'); do
+            echo "Validating $f"
+            jq empty "$f"
+          done
+
+  validate-frontmatter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Check SKILL.md and agent frontmatter
+        run: |
+          python - <<'PY'
+          import pathlib, re, sys
+          import yaml
+
+          REQUIRED_SKILL_FIELDS = {"name", "description"}
+          REQUIRED_AGENT_FIELDS = {"name", "description"}
+          problems = []
+
+          def check(path, required):
+              text = path.read_text()
+              m = re.match(r'^---\n(.*?)\n---\n', text, re.DOTALL)
+              if not m:
+                  problems.append(f"{path}: missing frontmatter")
+                  return
+              try:
+                  fm = yaml.safe_load(m.group(1)) or {}
+              except yaml.YAMLError as e:
+                  problems.append(f"{path}: invalid YAML frontmatter: {e}")
+                  return
+              missing = required - fm.keys()
+              if missing:
+                  problems.append(f"{path}: missing frontmatter fields: {sorted(missing)}")
+
+          for p in pathlib.Path(".claude/skills").rglob("SKILL.md"):
+              check(p, REQUIRED_SKILL_FIELDS)
+
+          for p in pathlib.Path(".claude/agents").glob("*.md"):
+              check(p, REQUIRED_AGENT_FIELDS)
+
+          if problems:
+              print("\n".join(problems))
+              sys.exit(1)
+          print("Frontmatter OK")
+          PY
+
+  installer-smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare sandbox HOME and demo repos
+        run: |
+          SBOX="$RUNNER_TEMP/sandbox"
+          mkdir -p "$SBOX/.claude" "$SBOX/code/demo-mobile" "$SBOX/code/demo-api"
+          echo '{}' > "$SBOX/.claude/settings.json"
+          (cd "$SBOX/code/demo-mobile" && git init -q && echo 'name: x' > pubspec.yaml && git add . && git -c user.email=t@t -c user.name=t commit -qm init)
+          (cd "$SBOX/code/demo-api" && git init -q && echo 'plugins {}' > build.gradle.kts && git add . && git -c user.email=t@t -c user.name=t commit -qm init)
+          echo "SBOX=$SBOX" >> "$GITHUB_ENV"
+      - name: Run installer
+        run: HOME="$SBOX" PROJECT_REPOS_DIR="$SBOX/code" bash install.sh
+      - name: Verify hooks symlinked
+        run: |
+          test -L "$SBOX/.claude/hooks/bash-safety.sh"
+          test -L "$SBOX/.claude/hooks/write-guard.sh"
+      - name: Verify project-repos.json has resolved paths
+        run: |
+          jq -e '.repos.mobile.path != null' "$SBOX/.claude/project-repos.json"
+          jq -e '.repos.api.path != null' "$SBOX/.claude/project-repos.json"
