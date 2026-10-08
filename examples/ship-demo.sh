@@ -6,7 +6,7 @@
 #   ./examples/ship-demo.sh
 #
 # For a recording:
-#   asciinema rec --cols 110 --rows 34 -c "./examples/ship-demo.sh" assets/ship-demo.cast
+#   asciinema rec --headless --window-size 124x26 -c "./examples/ship-demo.sh" assets/ship-demo.cast
 #   agg --theme monokai assets/ship-demo.cast assets/ship-demo.gif
 
 set -euo pipefail
@@ -28,6 +28,7 @@ printf '#!/usr/bin/env bash\nexit 0\n' >"$DEMO/bin/ship-jira"
 ln -s "$TOOLKIT_DIR/scripts/ship-state.sh" "$DEMO/bin/ship-state"
 chmod +x "$DEMO/bin/"*
 export PATH="$DEMO/bin:$PATH" SHIP_WORK_DIR="$DEMO/work"
+COLS="${DEMO_COLS:-124}"
 
 DIM=$'\033[2m'; BOLD=$'\033[1m'; GREEN=$'\033[32m'; ORANGE=$'\033[38;5;214m'; CYAN=$'\033[36m'; RESET=$'\033[0m'
 
@@ -43,7 +44,7 @@ claude_line() { printf '%s\n' "$1"; sleep "${2:-0.5}"; }
 status_bar() {
   printf '\033[48;5;236m\033[38;5;250m %s ship %s  1:loop  %s2:work%s %*s%sship:%s waiting%s  %s %s\n\n' \
     $'\033[48;5;31m\033[38;5;231m\033[1m' $'\033[22m\033[48;5;236m\033[38;5;250m' \
-    $'\033[48;5;31m\033[38;5;231m' $'\033[48;5;236m\033[38;5;250m' 52 "" "$ORANGE$BOLD" "$1" \
+    $'\033[48;5;31m\033[38;5;231m' $'\033[48;5;236m\033[38;5;250m' "$((COLS - 47))" "" "$ORANGE$BOLD" "$1" \
     $'\033[22m\033[38;5;250m' "$(date +%H:%M)" "$RESET"
   sleep 1.4
 }
@@ -63,6 +64,7 @@ type_cmd "python3 hooks/ship_guard.py 'git push origin HEAD'"
 printf '%sblocked:%s %s\n\n' "$ORANGE" "$RESET" "$(python3 -I "$TOOLKIT_DIR/hooks/ship_guard.py" 'git push origin HEAD' || true)"
 sleep 1.8
 
+sleep 0.6; clear
 say "illustrative replay of a /ship session in the work window"
 printf '%s>%s /ship\n\n' "$CYAN" "$RESET"; sleep 1
 claude_line "● Since you last looked:"
@@ -88,6 +90,7 @@ claude_line "● Draft PR: https://github.com/example/demo-web/pull/42"
 claude_line "● Queued for Jira: comment \"[claude] Draft PR: …\" + move to In Review" 1.6
 printf '\n'
 
+sleep 0.6; clear
 say "back in the shell: WEB-214 moved to pr, one gate left"
 run ship-state list
 status_bar "$(ship-state awaiting-count)"
