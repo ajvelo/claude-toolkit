@@ -57,6 +57,29 @@ for hook in "$SCRIPT_DIR/hooks/"*.sh; do
 done
 chmod +x "$SCRIPT_DIR/hooks/"*.sh
 
+# --- /ship CLI wrappers on PATH ---
+BIN_DIR="$HOME/.local/bin"
+mkdir -p "$BIN_DIR"
+chmod +x "$SCRIPT_DIR/scripts/"*.sh
+for pair in "ship-state.sh:ship-state" "ship-loop.sh:ship-loop" "ship-loop.sh:ship-up" "ship-loop.sh:ship-down" \
+            "ship-loop.sh:ship-work" "ship-qa.sh:ship-qa" "ship-media.sh:ship-media" "ship-jira.sh:ship-jira"; do
+  src="$SCRIPT_DIR/scripts/${pair%%:*}"
+  target="$BIN_DIR/${pair##*:}"
+  [ -f "$src" ] || continue
+  if [ -L "$target" ]; then
+    rm "$target"
+  elif [ -e "$target" ]; then
+    echo "  WARNING: $target exists (not a symlink). Leaving it alone."
+    continue
+  fi
+  ln -s "$src" "$target"
+done
+echo "  /ship commands linked into $BIN_DIR"
+case ":$PATH:" in
+  *":$BIN_DIR:"*) ;;
+  *) echo "  WARNING: $BIN_DIR is not on your PATH. Add: export PATH=\"\$HOME/.local/bin:\$PATH\"" ;;
+esac
+
 # --- Settings merge ---
 echo "[3/6] Configuring hooks in settings.json..."
 SETTINGS_FILE="$CLAUDE_DIR/settings.json"

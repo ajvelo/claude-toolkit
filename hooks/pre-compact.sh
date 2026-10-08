@@ -48,6 +48,13 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   fi
 fi
 
+SHIP_FILE="${SHIP_WORK_DIR:-$HOME/.claude/work}/${TICKET:-none}.md"
+if [ -n "${TICKET:-}" ] && [ -f "$SHIP_FILE" ] && command -v ship-state >/dev/null 2>&1; then
+  SUMMARY+="**/ship state** ($SHIP_FILE):\n\`\`\`\n$(ship-state summary "$TICKET" 2>/dev/null)\n\`\`\`\n"
+elif command -v ship-state >/dev/null 2>&1 && [ -n "$(ship-state list 2>/dev/null | sed 1d)" ]; then
+  SUMMARY+="**/ship in flight** (state in ~/.claude/work/):\n\`\`\`\n$(ship-state list 2>/dev/null)\n\`\`\`\n"
+fi
+
 ESCAPED=$(printf '%s' "$SUMMARY" | sed 's/\\/\\\\/g; s/"/\\"/g; s/\t/\\t/g')
 
 echo "{\"systemMessage\": \"$ESCAPED\"}"

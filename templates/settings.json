@@ -1,6 +1,10 @@
 {
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "allow": [
+      "Bash(ship-state:*)",
+      "Bash(ship-qa:*)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
