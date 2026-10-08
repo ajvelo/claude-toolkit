@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `/ship` ticket pipeline: pickup → plan → implement → draft PR → QA → post-merge monitoring → close, with per-ticket state files and an unattended tmux loop (`ship-up`, `ship-down`, `ship-loop`)
+- `/monitor` skill for post-merge checks against a pre-merge baseline
+- `ship_guard.py`: blocks commits, pushes, PR/issue writes, Jira writes and database shells while `SHIP_UNATTENDED=1`
+- `ship-state`, `ship-qa`, `ship-media` and `ship-jira` (Jira Cloud REST) commands, linked into `~/.local/bin` by the installer
+- Tests for the guard and the state CLI, and a recorded `/ship` demo (`examples/ship-demo.sh`)
+
 ## [0.1.0] — 2026-04-21
 
 ### Added

@@ -91,5 +91,16 @@ if echo "$COMMAND" | grep -qE 'kubectl\s+.*--context.*prod|helm\s+.*install.*pro
   deny "BLOCKED: Direct production deployment. Use the CI/CD pipeline instead."
 fi
 
+# --- Unattended /ship loop: gated actions park, never run ---
+if [ "${SHIP_UNATTENDED:-}" = "1" ]; then
+  GUARD="$(dirname "$(readlink -f "$0")")/ship_guard.py"
+  if [ ! -f "$GUARD" ] || ! command -v python3 >/dev/null 2>&1; then
+    deny "BLOCKED (SHIP_UNATTENDED): ship_guard.py or python3 missing, so nothing can be checked."
+  fi
+  if REASON=$(python3 -I "$GUARD" "$COMMAND"); then :; else
+    deny "BLOCKED (SHIP_UNATTENDED): $REASON is a gated action. Park the ticket with ship-state set <KEY> awaiting <gate> and describe the action in ## Next step."
+  fi
+fi
+
 # Allow everything else (exit 0 = allow, no JSON needed)
 exit 0

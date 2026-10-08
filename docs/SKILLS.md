@@ -1,6 +1,6 @@
 # Skills reference
 
-17 skills organised by workflow. Skills support auto-triggering, per-skill
+19 skills organised by workflow. Skills support auto-triggering, per-skill
 tool restrictions, and isolated execution.
 
 ---
@@ -52,6 +52,31 @@ and target repo(s) before planning.
 /start MOB-123 mobile
 /start INF-99 api,infra                   # multi-repo
 /start BUG-663                            # auto-investigates first
+```
+
+### `/ship`
+End-to-end ticket pipeline. Carries a Jira ticket from pickup through plan,
+implementation in a git worktree, QA, draft PR and seven days of post-merge
+monitoring, with its state in `~/.claude/work/<KEY>.md`. Run `ship-up` for
+an unattended `/loop /ship tick` in tmux; it parks at a gate (plan approval,
+publish, push, Jira writes) instead of acting, and `/ship` in the second
+window clears them. Details in [SHIP.md](SHIP.md).
+
+```
+/ship                                     # what changed, what's waiting on you
+/ship API-42                              # start or resume a ticket
+/ship API-42 abandon
+```
+
+### `/monitor`
+Runs a shipped ticket's monitoring spec (Sentry, a read-only SQL source,
+PostHog, GitHub) against a pre-merge baseline and logs `ok`, `regression`
+or `unavailable`. Read-only; regressions go through `/ship`'s `jira-write`
+gate.
+
+```
+/monitor API-42
+/monitor due
 ```
 
 ### `/pr`
