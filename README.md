@@ -23,7 +23,8 @@ knowledge base, regardless of which repository you're working on.
 
 ## What's in the box
 
-- **17 skills** — slash commands for ticket-to-PR workflows, investigation, build/test/analyze, onboarding, and releases. Skills support auto-triggering from natural language and per-skill tool restrictions.
+- **19 skills** — slash commands for ticket-to-PR workflows, an unattended ticket pipeline (`/ship`), investigation, build/test/analyze, onboarding, and releases. Skills support auto-triggering from natural language and per-skill tool restrictions.
+- **`/ship` pipeline** — a tmux loop that carries Jira tickets from pickup to a monitored production release, parking at a gate for your approval before anything leaves your machine. See [docs/SHIP.md](docs/SHIP.md).
 - **12 specialist sub-agents** — debuggers and reviewers (Kotlin, Flutter, TypeScript portal, Python backend, API gateway, database, Kafka, E2E) plus UX/QA/code review agents.
 - **7 safety hooks** — bash safety (pre-tool-use), write guard (secrets/migrations), auto-format (post-edit), bash-triage (post-run), desktop notification, status line, pre-compact.
 - **Generic installer** — auto-discovers your repo paths on disk (`$HOME`, `$HOME/code`, `$HOME/projects`, custom), writes a resolved path file, and symlinks per-project instructions.
@@ -121,6 +122,14 @@ Skills like `/jira`, `/sentry`, `/investigate`, and `/explore-repo` also
 
 ---
 
+## `/ship`: the ticket pipeline
+
+![/ship demo](assets/ship-demo.gif)
+
+Label a ticket `claude-ready` and an unattended loop picks it up, plans it, implements it in a worktree, runs QA, and watches production for a week after merge. It never commits, pushes, opens a PR or writes to Jira on its own: a hook blocks those commands and the ticket waits for you at a gate. Setup and the full stage list are in [docs/SHIP.md](docs/SHIP.md).
+
+---
+
 ## Skill catalogue
 
 ### Workflow
@@ -131,6 +140,8 @@ Skills like `/jira`, `/sentry`, `/investigate`, and `/explore-repo` also
 | `/pr`         | `/pr api create`                | Commit, create draft PR, review comments, fix, check CI.     |
 | `/verify`     | `/verify web /dashboard`        | Parallel verification — tests, ticket match, visual.          |
 | `/review-pr`  | `/review-pr #42`                | Team-based PR review (UX, code, QA agents in parallel).      |
+| `/ship`       | `/ship API-42`                  | Ticket pipeline with an unattended loop: pickup → plan → implement → draft PR → monitor. Parks at a gate before every outward action. |
+| `/monitor`    | `/monitor API-42`               | Post-merge checks for a shipped ticket (Sentry, SQL, PostHog, GitHub) against a pre-merge baseline. |
 
 ### Onboarding
 
@@ -228,13 +239,15 @@ claude-toolkit/
 ├── install.sh                # Installer
 ├── repos.conf                # Project registry (pipe-delimited)
 ├── .claude/
-│   ├── skills/               # 17 slash-command skills
+│   ├── skills/               # 19 slash-command skills
 │   └── agents/               # 12 specialist sub-agents
-├── hooks/                    # 7 safety hooks (bash)
+├── hooks/                    # 7 safety hooks (bash) + ship_guard.py
 ├── knowledge/                # Cross-project patterns and gotchas
 ├── projects/                 # Per-project instruction files
 ├── templates/                # Settings templates
-├── scripts/                  # discover-repos.sh and other helpers
+├── scripts/                  # discover-repos.sh, ship-* pipeline commands
+├── tests/                    # ship guard and state tests
+├── examples/                 # installer and /ship demo drivers
 ├── mcp/                      # MCP server config templates
 └── docs/                     # Skill, agent, hook, MCP, customisation docs
 ```
@@ -244,6 +257,7 @@ claude-toolkit/
 ## Documentation
 
 - `docs/SKILLS.md` — detailed skill reference
+- `docs/SHIP.md` — the `/ship` pipeline: gates, setup, stages
 - `docs/AGENTS.md` — agent activation triggers and capabilities
 - `docs/HOOKS.md` — hook lifecycle and implementation details
 - `docs/MCP-SETUP.md` — MCP server configuration

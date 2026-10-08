@@ -134,6 +134,8 @@ via the Skill tool — don't wait for explicit `/command` syntax.
 | Describes a bug, mentions tracing             | `/investigate`  | Read-only                     |
 | "what's in X", "explore X", "onboard X"       | `/explore-repo` | Read-only                     |
 | "start working on {TICKET}"                   | `/start`        | Confirm before branch + code  |
+| "ship {TICKET}", "what's waiting on me"       | `/ship`         | Parks at every git/PR/Jira gate |
+| "how is {TICKET} doing in prod"               | `/monitor`      | Read-only                     |
 | "create PR", "push", "commit"                 | `/pr`           | Confirm every git mutation    |
 | "check CI"                                    | `/pr ci`        | Read-only                     |
 | "run tests" / "analyze" + project             | `/flutter`, `/kt`, `/server`, etc. | Local commands  |
